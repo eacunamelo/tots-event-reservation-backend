@@ -36,6 +36,6 @@ El sistema permite:
 ## 🚀 Instalación
 
 ```bash
-git clone https://github.com/eacunamelo/event-reservation-backend.git
+git clone https://github.com/eacunamelo/tots-event-reservation-backend.git
 cd event-reservation-backend
 composer install
