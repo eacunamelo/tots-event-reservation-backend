@@ -56,6 +56,12 @@ return [
             'throw' => false,
         ],
 
+        'spaces' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/spaces'),
+            'url' => env('APP_URL') . '/storage/spaces',
+            'visibility' => 'public',
+        ],
     ],
 
     /*

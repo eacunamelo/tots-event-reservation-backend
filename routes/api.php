@@ -5,22 +5,27 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\SpaceController;
 use App\Http\Controllers\Api\ReservationController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-*/
+Route::prefix('api')->group(function () {
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
 
-Route::middleware('auth')->group(function () {
+    Route::middleware('auth:api')->group(function () {
 
-    Route::get('/me', [AuthController::class, 'me']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/me', [AuthController::class, 'me']);
+        Route::post('/logout', [AuthController::class, 'logout']);
 
-    Route::apiResource('spaces', SpaceController::class);
+        Route::get('/spaces', [SpaceController::class, 'index']);
+        Route::get('/spaces/{id}', [SpaceController::class, 'show']);
 
-    Route::apiResource('reservations', ReservationController::class)
-        ->only(['index', 'store', 'destroy']);
+        Route::post('/spaces', [SpaceController::class, 'store']);
+        Route::put('/spaces/{id}', [SpaceController::class, 'update']);
+        Route::delete('/spaces/{id}', [SpaceController::class, 'destroy']);
+
+        Route::get('/reservations', [ReservationController::class, 'index']);
+        Route::get('/reservations/{id}', [ReservationController::class, 'show']);
+        Route::post('/reservations', [ReservationController::class, 'store']);
+        Route::put('/reservations/{id}', [ReservationController::class, 'update']);
+        Route::delete('/reservations/{id}', [ReservationController::class, 'destroy']);
+    });
 });

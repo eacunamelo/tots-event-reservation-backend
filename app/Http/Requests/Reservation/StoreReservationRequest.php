@@ -4,7 +4,7 @@ namespace App\Http\Requests\Space;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateSpaceRequest extends FormRequest
+class StoreSpaceRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,10 +14,10 @@ class UpdateSpaceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['sometimes','required','string'],
+            'name' => ['required','string'],
             'description' => ['nullable','string'],
-            'capacity' => ['sometimes','required','integer','min:1'],
-            'image' => 'sometimes|nullable|image|max:2048',
+            'capacity' => ['required','integer','min:1'],
+            'image' => 'nullable|image|max:2048',
         ];
     }
 }

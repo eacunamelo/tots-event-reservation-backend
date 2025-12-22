@@ -4,16 +4,15 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Reservation;
+use App\Http\Requests\Reservation\StoreReservationRequest;
+use App\Http\Requests\Reservation\UpdateReservationRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-
-use Carbon\Carbon;
 
 class ReservationController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
     }
 
     public function index(): JsonResponse
@@ -23,31 +22,54 @@ class ReservationController extends Controller
         );
     }
 
-    public function store(Request $request): JsonResponse
+    public function show(int $id): JsonResponse
     {
-        $data = $request->validate([
-            'space_id'   => 'required|exists:spaces,id',
-            'event_name' => 'required|string',
-            'start_time' => 'required|date',
-            'end_time'   => 'required|date|after:start_time',
-        ]);
+        $reservation = Reservation::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        return response()->json($reservation);
+    }
+
+    public function store(StoreReservationRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+
+        $overlap = Reservation::where('space_id', $data['space_id'])
+            ->where('start_time', '<', $data['end_time'])
+            ->where('end_time', '>', $data['start_time'])
+            ->exists();
+
+        if ($overlap) {
+            return response()->json([
+                'message' => 'El espacio ya está reservado en ese horario'
+            ], 409);
+        }
 
         $reservation = Reservation::create([
-            'user_id'    => auth()->id(),
-            'space_id'   => $data['space_id'],
-            'event_name' => $data['event_name'],
-            'start_time' => Carbon::parse($data['start_time'])->format('Y-m-d H:i:s'),
-            'end_time'   => Carbon::parse($data['end_time'])->format('Y-m-d H:i:s'),
+            'user_id' => auth()->id(),
+            ...$data,
         ]);
 
         return response()->json($reservation, 201);
     }
 
-    public function destroy(Reservation $reservation): JsonResponse
+    public function update(UpdateReservationRequest $request, int $id): JsonResponse
     {
-        abort_unless($reservation->user_id === auth()->id(), 403);
+        $reservation = Reservation::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
 
-        $reservation->delete();
+        $reservation->update($request->validated());
+
+        return response()->json($reservation);
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        Reservation::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->delete();
 
         return response()->json(null, 204);
     }

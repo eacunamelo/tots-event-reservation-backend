@@ -13,6 +13,7 @@ class Space extends Model
         'name',
         'description',
         'capacity',
+        'image_url',
     ];
 
     public function reservations()

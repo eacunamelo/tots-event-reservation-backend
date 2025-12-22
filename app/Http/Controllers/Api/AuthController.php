@@ -11,7 +11,10 @@ use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
 {
-    public function __construct(private AuthService $authService) {}
+    public function __construct(private AuthService $authService)
+    {
+        $this->middleware('auth:api')->only(['me', 'logout']);
+    }
 
     public function register(RegisterRequest $request): JsonResponse
     {

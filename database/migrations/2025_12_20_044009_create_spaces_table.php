@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->integer('capacity');
+            $table->string('image_url')->nullable();
             $table->timestamps();
         });
     }
