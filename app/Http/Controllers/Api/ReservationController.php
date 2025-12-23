@@ -31,6 +31,15 @@ class ReservationController extends Controller
         return response()->json($reservation);
     }
 
+    public function bySpace(int $spaceId): JsonResponse
+    {
+        $reservations = Reservation::where('space_id', $spaceId)
+            ->orderBy('start_time')
+            ->get();
+
+        return response()->json($reservations);
+    }
+
     public function store(StoreReservationRequest $request): JsonResponse
     {
         $data = $request->validated();

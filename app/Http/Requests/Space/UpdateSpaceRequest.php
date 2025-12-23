@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Reservation;
+namespace App\Http\Requests\Space;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateReservationRequest extends FormRequest
+class UpdateSpaceRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,9 +14,10 @@ class UpdateReservationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'event_name' => ['sometimes','required','string'],
-            'start_time' => ['sometimes','required','date'],
-            'end_time' => ['sometimes','required','date','after:start_time'],
+            'name' => ['sometimes','required','string'],
+            'description' => ['nullable','string'],
+            'capacity' => ['sometimes','required','integer','min:1'],
+            'image' => 'sometimes|nullable|image|max:2048',
         ];
     }
 }
