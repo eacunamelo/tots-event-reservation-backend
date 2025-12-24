@@ -144,3 +144,22 @@ En un entorno productivo o serverless, este almacenamiento puede migrarse fácil
 - La validación de solapamiento de reservas se realiza a nivel backend.
 - La arquitectura prioriza claridad y separación de responsabilidades.
 - Swagger será incorporado como mejora adicional para documentación interactiva de la API.
+
+## 📚 API Documentation (Swagger)
+
+Swagger fue implementado durante el desarrollo para documentar los endpoints.
+Sin embargo, se detectó un problema de compatibilidad entre:
+
+- Laravel 10.x
+- PHP 8.2
+- L5-Swagger 8.6.x (Windows environment)
+
+El error corresponde a un bug conocido relacionado con la clave `proxy`
+en el paquete `darkaonline/l5-swagger`, que ocurre antes del bootstrap
+de la aplicación y no puede ser mitigado desde configuración o providers.
+
+📌 **Decisión técnica**  
+Para no comprometer la estabilidad de la aplicación, Swagger fue retirado
+del runtime final, manteniendo la documentación de endpoints en este README.
+
+La API puede ser probada completamente vía Postman o cualquier cliente HTTP.
