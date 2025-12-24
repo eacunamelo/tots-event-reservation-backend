@@ -15,20 +15,35 @@ class ReservationSeeder extends Seeder
         $user  = User::where('role', 'user')->first();
         $space = Space::first();
 
-        Reservation::create([
-            'user_id'    => $user->id,
-            'space_id'   => $space->id,
-            'event_name' => 'Reunión de prueba',
-            'start_time' => Carbon::now()->addDay()->setTime(9, 0),
-            'end_time'   => Carbon::now()->addDay()->setTime(11, 0),
-        ]);
+        if (!$user || !$space) {
+            return;
+        }
 
-        Reservation::create([
-            'user_id'    => $user->id,
-            'space_id'   => $space->id,
-            'event_name' => 'Workshop interno',
-            'start_time' => Carbon::now()->addDay()->setTime(14, 0),
-            'end_time'   => Carbon::now()->addDay()->setTime(16, 0),
-        ]);
+        $reservations = [
+            [
+                'event_name' => 'Reunión de prueba',
+                'start_time' => Carbon::now()->addDay()->setTime(9, 0),
+                'end_time'   => Carbon::now()->addDay()->setTime(11, 0),
+            ],
+            [
+                'event_name' => 'Workshop interno',
+                'start_time' => Carbon::now()->addDay()->setTime(14, 0),
+                'end_time'   => Carbon::now()->addDay()->setTime(16, 0),
+            ],
+        ];
+
+        foreach ($reservations as $reservation) {
+            Reservation::updateOrCreate(
+                [
+                    'user_id'    => $user->id,
+                    'space_id'   => $space->id,
+                    'event_name' => $reservation['event_name'],
+                ],
+                [
+                    'start_time' => $reservation['start_time'],
+                    'end_time'   => $reservation['end_time'],
+                ]
+            );
+        }
     }
 }
